@@ -10,7 +10,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class AppComponent {
   title = 'TODOapp';
-  apiURL: string = 'http://localhost:3000';
+  apiURL: string = 'https://back-end-todo-app-8.onrender.com';
 
   constructor(private service: HttpClient) {
     this.READ_tarefas();
