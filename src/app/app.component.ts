@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Tarefa } from './tarefa';
 import { HttpClient } from '@angular/common/http';
 
@@ -6,44 +6,69 @@ import { HttpClient } from '@angular/common/http';
   selector: 'app-root',
   templateUrl: './app.component.html',
   standalone: false,
-  styleUrl: './app.component.css',
+  styleUrls: ['./app.component.css'],
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'TODOapp';
   apiURL: string = 'https://back-end-todo-app-8.onrender.com';
+  arrayDeTarefas: Tarefa[] = [];
 
-  constructor(private service: HttpClient) {
+  constructor(private service: HttpClient) {}
+
+  ngOnInit(): void {
     this.READ_tarefas();
   }
 
-  arrayDeTarefas: Tarefa[] = [];
-
   READ_tarefas() {
     this.service.get<Tarefa[]>(`${this.apiURL}/api/getAll`).subscribe(
-      resultado => this.arrayDeTarefas=resultado);
+      resultado => {
+        this.arrayDeTarefas = resultado;
+        console.log('Tarefas carregadas', this.arrayDeTarefas);
+      },
+      erro => {
+        console.error('Erro ao carregar tarefas', erro);
+      }
+    );
   }
 
   CREATE_tarefa(descricaoNovaTarefa: string) {
-    var novaTarefa = new Tarefa(descricaoNovaTarefa, false);
+    const novaTarefa = new Tarefa(descricaoNovaTarefa, false);
     this.service.post<Tarefa>(`${this.apiURL}/api/post`, novaTarefa).subscribe(
-      resultado => { console.log(resultado); this.READ_tarefas(); });
+      resultado => {
+        console.log('Tarefa criada', resultado);
+        this.READ_tarefas(); // Recarrega as tarefas após a criação
+      },
+      erro => {
+        console.error('Erro ao criar tarefa', erro);
+      }
+    );
   }
 
   DELETE_tarefa(tarefaASerRemovida: Tarefa) {
-    var indice = this.arrayDeTarefas.indexOf(tarefaASerRemovida);
-    var id = this.arrayDeTarefas[indice]._id;
+    const indice = this.arrayDeTarefas.indexOf(tarefaASerRemovida);
+    const id = this.arrayDeTarefas[indice]._id;
     this.service.delete<Tarefa>(`${this.apiURL}/api/delete/${id}`).subscribe(
-    resultado => {
-      console.log(resultado); 
-      this.READ_tarefas(); 
-    });
+      resultado => {
+        console.log('Tarefa deletada', resultado);
+        this.READ_tarefas(); // Recarrega as tarefas após a exclusão
+      },
+      erro => {
+        console.error('Erro ao deletar tarefa', erro);
+      }
+    );
   }
 
   UPDATE_tarefa(tarefaAserModificada: Tarefa) {
-    var indice = this.arrayDeTarefas.indexOf(tarefaAserModificada);
-    var id = this.arrayDeTarefas[indice]._id;
-    this.service.patch<Tarefa>(`${this.apiURL}/api/update/${id}`,
-    tarefaAserModificada).subscribe(
-    resultado => { console.log(resultado); this.READ_tarefas(); });
-   }
+    const indice = this.arrayDeTarefas.indexOf(tarefaAserModificada);
+    const id = this.arrayDeTarefas[indice]._id;
+    this.service.patch<Tarefa>(`${this.apiURL}/api/update/${id}`, tarefaAserModificada).subscribe(
+      resultado => {
+        console.log('Tarefa atualizada', resultado);
+        this.READ_tarefas(); // Recarrega as tarefas após a atualização
+      },
+      erro => {
+        console.error('Erro ao atualizar tarefa', erro);
+      }
+    );
+  }
 }
