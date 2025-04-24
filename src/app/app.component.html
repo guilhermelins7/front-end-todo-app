@@ -1,14 +1,17 @@
 <div class="main">
-  <h1>Guilherme Lins dos Santos - 236161</h1>
-  <h1>Guilherme Henrique Feitoza Correia - 237057</h1>
-  <input
-    class="lg-text-input"
-    #campoNovoItem
-    (keyup.enter)="CREATE_tarefa(campoNovoItem.value); campoNovoItem.value = ''"
-  />
-  <button class="btn-primary" (click)="CREATE_tarefa(campoNovoItem.value)">
-    Adicionar Tarefa
-  </button>
+  <div class="autores">
+    <h1>Guilherme Lins dos Santos - 236161</h1>
+    <h1>Guilherme Henrique Feitoza Correia - 237057</h1>
+  </div>
+
+  <form
+    (submit)="campoNovoItem.value.trim() && CREATE_tarefa(campoNovoItem.value); campoNovoItem.value = ''; $event.preventDefault()"
+  >
+    <label for="nova-tarefa">Nova Tarefa:</label>
+    <input id="nova-tarefa" class="lg-text-input" #campoNovoItem />
+    <button type="submit" class="btn-primary">Adicionar Tarefa</button>
+  </form>
+
   <ul>
     <li *ngFor="let tarefaDoLoop of arrayDeTarefas">
       <app-item

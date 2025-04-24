@@ -10,10 +10,16 @@ import { Tarefa } from '../tarefa';
 export class ItemComponent {
   emEdicao = false;
   @Input() tarefa: Tarefa = new Tarefa('', false);
-  @Output() removerTarefa = new EventEmitter<Tarefa>(); // Evento para remover a tarefa;
-  @Output() modificaTarefa = new EventEmitter();
+  @Output() removerTarefa = new EventEmitter<Tarefa>();
+  @Output() modificaTarefa = new EventEmitter<Tarefa>();
 
   onRemoverTarefa() {
-    this.removerTarefa.emit(this.tarefa); // Emite a tarefa a ser removida
+    this.removerTarefa.emit(this.tarefa);
+  }
+
+  alternarStatus() {
+    this.tarefa.statusRealizada = !this.tarefa.statusRealizada;
+    this.modificaTarefa.emit(this.tarefa);
   }
 }
+

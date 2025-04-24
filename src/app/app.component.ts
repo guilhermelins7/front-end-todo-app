@@ -19,56 +19,62 @@ export class AppComponent implements OnInit {
     this.READ_tarefas();
   }
 
-  READ_tarefas() {
-    this.service.get<Tarefa[]>(`${this.apiURL}/api/getAll`).subscribe(
-      resultado => {
+  READ_tarefas(): void {
+    this.service.get<Tarefa[]>(`${this.apiURL}/api/getAll`).subscribe({
+      next: (resultado) => {
         this.arrayDeTarefas = resultado;
         console.log('Tarefas carregadas', this.arrayDeTarefas);
       },
-      erro => {
+      error: (erro) => {
         console.error('Erro ao carregar tarefas', erro);
       }
-    );
+    });
   }
 
-  CREATE_tarefa(descricaoNovaTarefa: string) {
+  CREATE_tarefa(descricaoNovaTarefa: string): void {
     const novaTarefa = new Tarefa(descricaoNovaTarefa, false);
-    this.service.post<Tarefa>(`${this.apiURL}/api/post`, novaTarefa).subscribe(
-      resultado => {
+    this.service.post<Tarefa>(`${this.apiURL}/api/post`, novaTarefa).subscribe({
+      next: (resultado) => {
         console.log('Tarefa criada', resultado);
-        this.READ_tarefas(); // Recarrega as tarefas após a criação
+        this.READ_tarefas();
       },
-      erro => {
+      error: (erro) => {
         console.error('Erro ao criar tarefa', erro);
       }
-    );
+    });
   }
 
-  DELETE_tarefa(tarefaASerRemovida: Tarefa) {
-    const indice = this.arrayDeTarefas.indexOf(tarefaASerRemovida);
-    const id = this.arrayDeTarefas[indice]._id;
-    this.service.delete<Tarefa>(`${this.apiURL}/api/delete/${id}`).subscribe(
-      resultado => {
+  DELETE_tarefa(tarefaASerRemovida: Tarefa): void {
+    if (!tarefaASerRemovida._id) {
+      console.error('ID da tarefa não encontrado.');
+      return;
+    }
+
+    this.service.delete(`${this.apiURL}/api/delete/${tarefaASerRemovida._id}`).subscribe({
+      next: (resultado) => {
         console.log('Tarefa deletada', resultado);
-        this.READ_tarefas(); // Recarrega as tarefas após a exclusão
+        this.READ_tarefas();
       },
-      erro => {
+      error: (erro) => {
         console.error('Erro ao deletar tarefa', erro);
       }
-    );
+    });
   }
 
-  UPDATE_tarefa(tarefaAserModificada: Tarefa) {
-    const indice = this.arrayDeTarefas.indexOf(tarefaAserModificada);
-    const id = this.arrayDeTarefas[indice]._id;
-    this.service.patch<Tarefa>(`${this.apiURL}/api/update/${id}`, tarefaAserModificada).subscribe(
-      resultado => {
+  UPDATE_tarefa(tarefaAserModificada: Tarefa): void {
+    if (!tarefaAserModificada._id) {
+      console.error('ID da tarefa não encontrado.');
+      return;
+    }
+
+    this.service.patch(`${this.apiURL}/api/update/${tarefaAserModificada._id}`, tarefaAserModificada).subscribe({
+      next: (resultado) => {
         console.log('Tarefa atualizada', resultado);
-        this.READ_tarefas(); // Recarrega as tarefas após a atualização
+        this.READ_tarefas();
       },
-      erro => {
+      error: (erro) => {
         console.error('Erro ao atualizar tarefa', erro);
       }
-    );
+    });
   }
 }
